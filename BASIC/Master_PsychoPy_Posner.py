@@ -6,6 +6,7 @@
 # February 2017
 
 #Import the necessary modules from the Python storage bank
+from psychopy import visual, core, data, gui, event 
 
 #Create a dictionary called info with the following keys and values:
         # participant   -   '' (an empty string)
@@ -45,7 +46,7 @@ respClock = core.Clock() #create the class clock.
 
 probe = visual.ImageStim(win, size = 80, pos = [300, 0], image = None, mask = 'raisedCos', color = 'blue') 
 
-cue = visual.ShapeStim(win, vertices = [[-30,-20],[-30,20],[30,0]], lineColor = 'red', fillColor = 'firebrick')
+cue = visual.ShapeStim(win, vertices = [[-30,20],[30,40],[30,0]], lineColor = 'red', fillColor = 'firebrick')
 
 
 ###############-------------Trial/Experiment Handler---------------------------###############
@@ -78,6 +79,14 @@ posnerExp.addLoop(trials) #there could be other loops (like practice loop)
 
 # Instructions
 
+instruct = 'Press Left if the circle appears on the left, press right if it is on the right'
+
+instructions = visual.TextStim(win, text = instruct , color = 'white')
+
+instructions.draw()
+win.flip()
+keys = event.waitKeys(keyList = ['space'])
+
 # Start a For Loop to loop through your trial handler using the iterater name thisTrial
 
 for thisTrial in trials: # trials is of course from the above trials (based on the data handler)
@@ -87,9 +96,10 @@ for thisTrial in trials: # trials is of course from the above trials (based on t
     rt=None #stops carry over
 
     # Set the orientation of the probe and cue, set these to whats currently in the trial handler (your iterator)
-    probe.pos([thisTrial['probeX'],0]) #set the position of our probe based on the columns in trials
-    cue.ori(thisTrial['cueOri']) # set the orientation of the cue (triangle. 0 positon is it facing right, 180 is flipped to left)
-
+    probe.pos = [thisTrial['probeX'],0] #set the position of our probe based on the columns in trials
+    cue.ori = thisTrial['cueOri'] # set the orientation of the cue (triangle. 0 positon is it facing right, 180 is flipped to left)
+    print probe.pos, 'Probe'
+    print cue.ori, 'Cue'
 
     ## Next, we want to display our fixation cross
     ## We should use a frame timer, assume your monitor is 60Hz and display for 500ms

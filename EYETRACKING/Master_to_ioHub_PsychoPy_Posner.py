@@ -6,10 +6,9 @@
 # February 2017
 
 #Import the necessary modules from the Python storage bank
-from psychopy import visual, core, data, gui, event
+from psychopy import visual, core, data, gui
 
-from psychopy.iohub import (launchHubServer, EventConstants, EyeTrackerConstants, module_directory, 
-                            getCurrentDateTimeString, ioHubExperimentRuntime)
+from psychopy.iohub import launchHubServer, getCurrentDateTimeString
 
 
 #Particicpant Info and Other Settings
@@ -59,10 +58,10 @@ filename = "data/" + info['participant'] + "_" + info['dateStr']
 
 ###############----Trial/Experiment Handler----###############
 
-conditions = data.importConditions('conditions.xlsx') #basically imports your trials and assigns them to condition 
+conditions = data.importConditions('conditions.xlsx')
 
 #add trialHandler
-trials = data.TrialHandler(trialList=conditions, nReps=1) #default method is randomised, trials = trial handler function thats based on conditions as the trialList
+trials = data.TrialHandler(trialList=conditions, nReps=1)
 
 #add trials to the experiment handler to store data
 posnerExp = data.ExperimentHandler(name='Posner', version='2.0',
@@ -128,11 +127,11 @@ io.sendMessageEvent(text="EXPERIMENT_START", sec_time=flip_time)
 io.sendMessageEvent(text="IO_HUB EXPERIMENT_INFO START") 
 io.sendMessageEvent(text="ioHub Experiment started {0}".format(getCurrentDateTimeString()))
 io.sendMessageEvent(text="Experiment ID: {0}, Session ID: {1}".format(io.experimentID,io.experimentSessionID))
-io.sendMessageEvent(text="Stimulus Screen ID: {0}, Size (pixels): {1}, CoordType: {2}".format(display.getIndex(),display.getPixelResolution(),display.getCoordinateType()))
+io.sendMessageEvent(text="Stimulus Screen ID: {0}, Size (pixels): {1}, CoordType: {2}".format(display.getIndex(), res, units))
 io.sendMessageEvent(text="Calculated Pixels Per Degree: {0} x, {1} y".format(*display.getPixelsPerDegree()))        
 io.sendMessageEvent(text="IO_HUB EXPERIMENT_INFO END")
 
-#Clear events before trail start
+#Clear events before trial start
 io.clearEvents('all')
 
 #Begin Trial Sequence
@@ -153,7 +152,7 @@ for thisTrial in trials:
     flips = win.flip()
 
     #Send a message to ioHub that the main trial is about to begin
-    io.sendMessageEvent(text="TRIAL{}_START".format(t), sec_time=flips)
+    io.sendMessageEvent(text="TRIAL{0}_START".format(t), sec_time=flips)
 
     #Log some experiment stuff to the trialHandler Dictionary for this trial
     thisTrial['session_id']=io.getSessionID()
@@ -183,13 +182,15 @@ for thisTrial in trials:
 
         if frameN == 0:
             flips = win.flip()
-            io.sendMessageEvent(text ="Fix_Onset TrialNo {}".format(t), sec_time = flips)
+            io.sendMessageEvent(text ="Fix_Onset TrialNo {}".format(t), 
+                                sec_time = flips)
         else:
             win.flip()
 
     #Log offset of fixation
     flips = win.flip() #(switches to blank)
-    io.sendMessageEvent(text ="Fix_Offset TrialNo {}".format(t), sec_time = flips)
+    io.sendMessageEvent(text ="Fix_Offset TrialNo {}".format(t), 
+                        sec_time = flips)
 
 
     # Display Cues for 200ms
@@ -206,13 +207,15 @@ for thisTrial in trials:
 
         if frameN == 0:
             flips = win.flip()
-            io.sendMessageEvent(text ="Cue_Onset TrialNo {}".format(t), sec_time = flips)
+            io.sendMessageEvent(text ="Cue_Onset TrialNo {0}".format(t), 
+                                sec_time = flips)
         else:
             win.flip()
 
     #Log offset of cue
     flips = win.flip()
-    io.sendMessageEvent(text ="Cue_Offset TrialNo {}".format(t), sec_time = flips)
+    io.sendMessageEvent(text ="Cue_Offset TrialNo {0}".format(t), 
+                        sec_time = flips)
 
     #Reset the clock on flip
     win.callOnFlip(respClock.reset) #NB: reset not reset() 
@@ -226,7 +229,7 @@ for thisTrial in trials:
     keys = []
 
     while len(keys) == 0:
-        
+
         probe.draw()
 
         gpos = tracker.getLastGazePosition()
@@ -239,12 +242,13 @@ for thisTrial in trials:
 
         if iteration == 0:
             flips = win.flip()
-            io.sendMessageEvent(text ="Probe_Onset TrialNo {0} Coords = {1}, {2}".format(t, gpos[0], gpos[1]), sec_time = flips)
+            io.sendMessageEvent(text ="Probe_Onset TrialNo {0} Coords = {1}, {2}".format(t, gpos[0], gpos[1]),
+                                sec_time = flips)
             iteration +=1
         else:
             win.flip()
 
-        keys = kb.getKeys(keys = ['m','z','ESCAPE'])
+        keys = kb.getKeys(keys = ['m', 'z', 'ESCAPE'])
 
         if len(keys) == 0:
             pass
@@ -259,7 +263,8 @@ for thisTrial in trials:
             print 'correct'
             break
         elif 'ESCAPE' in keys:
-            io.sendMessageEvent(text ="Pressed Escape TrialN {}".format(t), sec_time = flips)
+            io.sendMessageEvent(text ="Pressed Escape TrialN {0}".format(t), 
+                                sec_time = flips)
             tracker.setRecordingState(False)
             tracker.setConnectionState(False)
             trials.finished = True
@@ -281,7 +286,8 @@ for thisTrial in trials:
     #Log offset and trial end
     flips = win.flip()
     thisTrial['TRIAL_END'] = flips
-    io.sendMessageEvent(text ="Probe_Offset TrialNo {}".format(t), sec_time = flips)
+    io.sendMessageEvent(text ="Probe_Offset TrialNo {0}".format(t), 
+                        sec_time = flips)
     print 'Trial ended'
 
     #Add the thisTrial dictionary to the ioHub file
@@ -295,7 +301,7 @@ for thisTrial in trials:
 
     #Clear events
     io.clearEvents('all')
-    
+
     #Set the Experiment Handler to the next row
     posnerExp.nextEntry()
 
